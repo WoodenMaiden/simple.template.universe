@@ -33,7 +33,7 @@ Then build the executable for Meta Quest 2:
 ### GAMA (tested with GAMA 1.9.1)
 - Copy the UnityLink GAMA model in your project, and import it from your model.
 - Optionally, copy the image directory of the template into your project (it only contains an image of a VR headset which is used to display the player in GAMA).
-- For all the species of agents that you want to send to Unity, make then a child of "agent_to_send" (species simple_agentA parent: agent_to_send{}).
+- For all the species of agents that you want to send to Unity, make then a child of "agent_to_send" (species simple_agentA parent: agent_to_send{}). Redefine the "index_species" variable. The indice is used in Unity to differentiate the species of agents. This must therefore be a value starting from 0 and incremented by 1 for each new species: example, "0 for simple_agentA", "1 for simple_agentB", ...
 - In the init (and eventually in a reflex if the list of agents to send changes during the simulation), fill the "agents_to_send" list with the agents to send (e.g. agents_to_send <- (list(simple_agentA) + list(simple_agentB);).
 - In the init section, add all the static geometries that you want to add in the Unity Scene. For that, fill the "background_geoms" with the list of geometries, "background_geoms_heights" with the height of each geometry, "background_geoms_colliders" with true (add a collider for the geometry, i.e. a physical existence of the geometry in Unity) or false for each geometry, and "background_geoms_outline_renderers" with true (display the outline in Unity) or false for each geometry. Instead of filling directly these 4 lists, another solution is to use the "add_background_data" action that takes 4 arguments: the list of geometries, the height of these geometries, true/false for the collider, true/false for the outline (e.g. do add_background_data(block collect each.shape, 5.0, true, false);
 - To display the player position, add the "default_player" species in the display.
@@ -57,10 +57,20 @@ In the UnityLink model, some parameter values can be defined:
 ### Unity (tested with Unity 2022.3.3f1)
 - Define a new 3D project
 - Assets Menu -> Import Package -> Custom Package and import the "GAMA-UNITY-VR.unitypackage"
-- In Packager manager (Windows menu -> Package Manager), install :
+- In Packager manager (Windows menu -> Package Manager), install:
       * TextMeshPro: import all
-      * Oculus Integration: import everything, and for each question after answering the default or recommended answer. It not avaible from the Unity Interface, it can be downloaded from: [https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022)
-  - to be able after to export the application for Meta Quest 2, follow the instructions given in the "Installation of the template" section
+      * Oculus Integration: import everything, and for each question after answering the default or recommended answer. It not avaible from the Unity Interface, it can be downloaded from: [https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022).
+  - To be able after to export and run the application for Meta Quest 2, follow the instructions given in the "Installation of the template" section
+  - From the Current Scene, remove the "Main Camera".
+  - Add to the scene at least 2 Prefabs (available from Assets/Prefab/GAMA Link): "GAMAConnector" (to enable the connection with GAMA) and "OVRCameraRig_Moving" (for the player).
+  - To use the physical environment, define a Floor: for that, just add a 3D object Cube to the scene (rename it as you want, and optionally add a material).
+  - In the GAMAConnector:
+      * Define the IP of the computer running GAMA (the Meta Quest Headset and the computer running GAMA have to use the same Wifi).
+      * Define the same port as the one defined in the UnityLink GAMA model
+      * Drag and Drop the "OVRCameraRig_Moving" from the same to the Player variable
+      * Drag and Drop the "Floor" from the same to the Ground variable
+      * For each species of agents to send to Unity from Unity; add a value in the Agent list (use the "+"): The index in the list correspond to the "index_species" variable (the species with "index_species" of 0, correspond to the first element of the list; the one with "index_species" of 1, correspond to the second element of the list, etc.). For each element of the list (i.e. each species of agents sent), choose a prefab that will be used to display the agent).
+        
     
 
 	
