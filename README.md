@@ -1,9 +1,9 @@
 # Template-VU
 Template repository pre-set for implementing GAMA model interfaced with Oculus VR headset ran by Unity
 
-# To install and run the template:
+## Installation of the template
 
-## For Unity (tested with Unity 2022.3.3f1):
+### Unity (tested with Unity 2022.3.3f1)
 
 
  - Open the "simple.universe.template/GAMA-UNITY-VR" project from Unity Hub.
@@ -16,10 +16,11 @@ Then build the executable for Meta Quest 2:
  - Click on Switch platform
  - Click on Player Setting. In the Oculus panels, for the 3 panels, click on "Fix All" and "Apply All"
  - The application then can be directly build and deploy on the Meta Quest headset (if this one is connected to the computer), by choosing the Build Setting windows Build and Run (or directly from the File Menu).
- - To be deploy on the Meta Quest 2, the headset should use a developer account. Using [Meta Quest Developper Hub](https://developer.oculus.com/documentation/unity/ts-odh/) can help the deployment and usage of the headset. 
+ - To be deploy on the Meta Quest 2, the headset should use a developer account. Using [Meta Quest Developper Hub](https://developer.oculus.com/documentation/unity/ts-odh/) can help the deployment and usage of the headset.
+ - It is possible to export the package from Unity: Assets Menu -> Export Package, then select the Folder to includes. In order to avoid to produce an heavy package, it is better to keep only the directories: "Eloi_CityKit", "nicoversity", "Prefabs", "Scenes", and "Scripts".
 
 
-## For GAMA (tested with GAMA 1.9.1):
+### GAMA (tested with GAMA 1.9.1)
  - Import from GAMA the Template GAMA model
  - 2 gama models are defined inside:
       * UnityLink.gaml: the main file that define the connection between GAMA and Unity. It has to be imported in all projects.
@@ -27,5 +28,41 @@ Then build the executable for Meta Quest 2:
           
    
 
+## Usage of the template to enable VR from a GAMA model
+
+### GAMA (tested with GAMA 1.9.1)
+- Copy the UnityLink GAMA model in your project, and import it from your model.
+- Optionally, copy the image directory of the template into your project (it only contains an image of a VR headset which is used to display the player in GAMA).
+- For all the species of agents that you want to send to Unity, make then a child of "agent_to_send" (species simple_agentA parent: agent_to_send{}).
+- In the init (and eventually in a reflex if the list of agents to send changes during the simulation), fill the "agents_to_send" list with the agents to send (e.g. agents_to_send <- (list(simple_agentA) + list(simple_agentB);).
+- In the init section, add all the static geometries that you want to add in the Unity Scene. For that, fill the "background_geoms" with the list of geometries, "background_geoms_heights" with the height of each geometry, "background_geoms_colliders" with true (add a collider for the geometry, i.e. a physical existence of the geometry in Unity) or false for each geometry, and "background_geoms_outline_renderers" with true (display the outline in Unity) or false for each geometry. Instead of filling directly these 4 lists, another solution is to use the "add_background_data" action that takes 4 arguments: the list of geometries, the height of these geometries, true/false for the collider, true/false for the outline (e.g. do add_background_data(block collect each.shape, 5.0, true, false);
+- To display the player position, add the "default_player" species in the display.
+- To add the possibility to move the player location from GAMA, make the experiment a child of vr_xp (experiment simple_simulation parent: vr_xp) and add an event in the display that call the "move_player" action (e.g. event #mouse_down action: move_player;)
+- It is recommanded to add the "autorun: true" facet to the experiment and to define a "minimum_cycle_duration" for the experiment higher than 0.01.
+
+In the UnityLink model, some parameter values can be defined: 
+- bool connect_to_unity: Activate the unity connection; if activated, the model will wait for an connection from Unity to start
+- int port: connection port
+- precision: as all data (location, rotation) are send as int, number of decimal for the data
+- float delay_after_mes: possibility to add a delay after moving the player (in ms)
+- float player_agent_perception_radius: allow to reduce the quantity of information sent to Unity - only the agents at a certain distance are sent
+- float player_agents_min_dist: allow to not send to Unity agents that are to close (i.e. overlapping)
+- bool create_player: allow to create a player agent
+- bool move_player_from_unity: let the player moves in GAMA as it moves in Unity
+- bool use_physics_for_player: does the player should has a physical exitence in Unity (i.e. cannot pass through specific geometries)
+- point location_init: init location of the player in the environment - this information will be sent to Unity to move the player accordingly
+- float player_size_GAMA: player size - only used for displaying the player in GAMA
+
+  
+### Unity (tested with Unity 2022.3.3f1)
+- Define a new 3D project
+- Assets Menu -> Import Package -> Custom Package and import the "GAMA-UNITY-VR.unitypackage"
+- In Packager manager (Windows menu -> Package Manager), install :
+      * TextMeshPro: import all
+      * Oculus Integration: import everything, and for each question after answering the default or recommended answer. It not avaible from the Unity Interface, it can be downloaded from: [https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022)
+  - to be able after to export the application for Meta Quest 2, follow the instructions given in the "Installation of the template" section
+    
+
+	
 
 
