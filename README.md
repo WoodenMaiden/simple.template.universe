@@ -16,6 +16,7 @@ Then build the executable for Meta Quest 2:
  - Click on Switch platform
  - Click on Player Setting. In the Oculus panels, for the 3 panels, click on "Fix All" and "Apply All"
  - The application then can be directly build and deploy on the Meta Quest headset (if this one is connected to the computer), by choosing the Build Setting windows Build and Run (or directly from the File Menu).
+ - To be deploy on the Meta Quest 2, the headset should use a developer account. Using [Meta Quest Developper Hub](https://developer.oculus.com/documentation/unity/ts-odh/) can help the deployment and usage of the headset. 
 
 
 ## For GAMA (tested with GAMA 1.9.1):
