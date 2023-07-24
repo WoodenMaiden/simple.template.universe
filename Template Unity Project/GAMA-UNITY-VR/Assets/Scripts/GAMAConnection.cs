@@ -9,17 +9,22 @@ using TMPro;
 public class GlobalTest : MonoBehaviour
 {
 
-    // private string ip = "192.168.0.131";//"192.68.0.132";
-    private string ip = "192.168.0.186";
-    private int port = 8000;
+    public string ip = "192.168.0.186";
+    public int port = 8000;
 
+    // optional: define a scale between GAMA and Unity for the location given
     private float GamaCRSCoefX = 1.0f;
     private float GamaCRSCoefY = 1.0f;
+
+    //optional: rotation, Y-translation and Size scale to apply to the prefabs correspoding to the different species of agents
     private List<float> rotations = new List<float> { 90.0f, 90.0f, 0.0f };
     private List<float> YValues = new List<float> { -0.9f, -0.9f, 0.15f };
     private List<float> Sizefactor = new List<float> { 0.3f, 0.3f, 1.0f };
 
+    //Y scale for the ground
     private float groundY = 1.0f;
+
+    //Y-offset to apply to the background geometries
     private float offsetYBackgroundGeom = 0.1f;
 
 
