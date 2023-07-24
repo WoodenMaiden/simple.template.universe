@@ -19,10 +19,10 @@ Then build the executable for Meta Quest 2:
 
 
 ## For GAMA (tested with GAMA 1.9.1):
-    - Import from GAMA the Template GAMA model
-    - 2 gama models are defined inside:
-          * UnityLink.gaml: the main file that define the connection between GAMA and Unity. It has to be imported in all projects.
-          * DemoModel.gaml: a example model that shows how to define a VR model from GAMA. It works with the DemoScene from the Unity package.
+ - Import from GAMA the Template GAMA model
+ - 2 gama models are defined inside:
+      * UnityLink.gaml: the main file that define the connection between GAMA and Unity. It has to be imported in all projects.
+      * DemoModel.gaml: a example model that shows how to define a VR model from GAMA. It works with the DemoScene from the Unity package.
           
    
 
