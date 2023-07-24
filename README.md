@@ -3,7 +3,7 @@ Template repository pre-set for implementing GAMA model interfaced with Oculus V
 
 # To install and run the plugin:
 
-## For the Unity part (tested with Unity 2022.3.3f1):
+## For Unity (tested with Unity 2022.3.3f1):
 
 
  - Open the "simple.universe.template/GAMA-UNITY-VR" project from Unity Hub.
@@ -17,7 +17,13 @@ Then build the executable for Meta Quest 2:
  - Click on Player Setting. In the Oculus panels, for the 3 panels, click on "Fix All" and "Apply All"
  - The application then can be directly build and deploy on the Meta Quest headset (if this one is connected to the computer), by choosing the Build Setting windows Build and Run (or directly from the File Menu).
 
-    
+
+## For GAMA (tested with GAMA 1.9.1):
+    - Import from GAMA the Template GAMA model
+    - 2 gama models are defined inside:
+          * UnityLink.gaml: the main file that define the connection between GAMA and Unity. It has to be imported in all projects.
+          * DemoModel.gaml: a example model that shows how to define a VR model from GAMA. It works with the DemoScene from the Unity package.
+          
    
 
 
