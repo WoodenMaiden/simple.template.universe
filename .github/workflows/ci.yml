@@ -1,0 +1,46 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  setup:
+    name: Download & setup project ⬇️
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check for a Unity License
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        run: |
+          if [ -z "$UNITY_LICENSE" ]; then
+            echo "You need to add a UNITY_LICENSE secret: https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository"
+            exit 1
+          fi
+
+      - name: Clone Repo  
+        uses: actions/checkout@v3
+
+      # Git LFS
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-cache
+        with:
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      - name: Pull LFS files
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
+
+      - name: Cache Library
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
