@@ -3,12 +3,12 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
-  setup:
-    name: Download & setup project ⬇️
+  test:
+    name: testing project
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check for a Unity License
+      - name: Check for a Unity License 📜
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         run: |
@@ -17,10 +17,24 @@ jobs:
             exit 1
           fi
 
+
+      # Un-comment the following step if you are short on disk space
+      # docs here: https://github.com/marketplace/actions/maximize-build-disk-space
+      
+      # - name: Maximize build space 🪶
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     remove-haskell: true
+      #     remove-codeql: true
+      #     remove-docker-images: true
+      # # We can afford to uninstall android & dotnet as gameci relies on docker containers
+      #     remove-android: true
+      #     remove-dotnet: true 
       - name: Clone Repo  
         uses: actions/checkout@v3
 
-      # Git LFS
+      # Lint & i18n here ?
+
       - name: Create LFS file list
         run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
 
@@ -44,3 +58,25 @@ jobs:
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-
+
+      # Testing time 
+      - name: Run tests 🧪
+        uses: game-ci/unity-test-runner@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: './Template Unity Project/GAMA-UNITY-VR'
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          artifactsPath: './reports' 
+
+      # Unity's test Framework (https://docs.unity3d.com/Packages/com.unity.test-framework@1.1/manual/index.html) Runs Nunit under the hood
+      # Meaning that we can use this action to avoid exporting the results as an artifact
+
+      - name: Test Report 📑
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    
+            # So we can run this step even if previous step failed
+        with:
+          name: Tests Results         # Name of the check run which will be created
+          path: ./reports/*           # Path to test results
+          reporter: dotnet-trx        # Format of test results
