@@ -1,7 +1,7 @@
 # Template-VU
 Template repository pre-set for implementing GAMA model interfaced with Oculus VR headset ran by Unity
 
-# To install and run the plugin:
+# To install and run the template:
 
 ## For Unity (tested with Unity 2022.3.3f1):
 
