@@ -46,8 +46,6 @@ global skills: [network]{
 	// for each geometry sent to Unity, does this one has a collider (i.e. a physical existence) ? 
 	list<bool> background_geoms_colliders;
 	
-	// for each geometry sent to Unity, does the outline should be rendered?
-	list<bool> background_geoms_outline_renderers;
 	
 	
 	
@@ -115,12 +113,11 @@ global skills: [network]{
 	}
 	
 	//add background geometries from a list of geometries, their heights, their collider usage, their outline rendered usage 
-	action add_background_data(list<geometry> geoms, float height, bool collider, bool outline_renderer) {
+	action add_background_data(list<geometry> geoms, float height, bool collider) {
 		background_geoms <- background_geoms + geoms;
 		loop times: length(geoms) {
 			background_geoms_heights << height;
 			background_geoms_colliders << collider;
-			background_geoms_outline_renderers << outline_renderer;
 		}
 	}
 	
@@ -147,7 +144,7 @@ global skills: [network]{
 		}
 		if not empty(background_geoms) {
 		
-			do send_geometries(background_geoms, background_geoms_heights,  background_geoms_colliders, background_geoms_outline_renderers, precision);
+			do send_geometries(background_geoms, background_geoms_heights,  background_geoms_colliders, precision);
 		}
 		do send_world;
 	}
@@ -169,7 +166,7 @@ global skills: [network]{
 	}
 	
 	//send the background geometries to the Unity client
-	action send_geometries(list<geometry> geoms, list<int> heights, list<bool> geometry_colliders, list<bool> geometry_outline_renderers, int precision_) {
+	action send_geometries(list<geometry> geoms, list<int> heights, list<bool> geometry_colliders, int precision_) {
 		map to_send;
 		list points <- [];
 		
@@ -183,7 +180,6 @@ global skills: [network]{
 		to_send <+ "points"::points;
 		to_send <+ "heights"::heights;
 		to_send <+ "hasColliders"::geometry_colliders;
-		to_send <+ "outlineRenderers"::geometry_outline_renderers;
 		
 		if unity_client = nil {
 			write "no client to send to";

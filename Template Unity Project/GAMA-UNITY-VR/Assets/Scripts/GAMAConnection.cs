@@ -408,7 +408,7 @@ public class GlobalTest : MonoBehaviour
                 if (pts.Count > 2)
                 {
                     print("cpt: " + cpt);
-                    GeneratePolygon(pts.ToArray(), geom.heights[cpt], geom.hasColliders[cpt], geom.outlineRenderers[cpt]);
+                    GeneratePolygon(pts.ToArray(), geom.heights[cpt], geom.hasColliders[cpt]);
                 }
                 pts = new List<Vector2>();
                 cpt++;
@@ -423,10 +423,11 @@ public class GlobalTest : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void GeneratePolygon(Vector2[] MeshDataPoints, float extrusionHeight, bool isUsingCollider, bool isOutlineRendered)
+    void GeneratePolygon(Vector2[] MeshDataPoints, float extrusionHeight, bool isUsingCollider)
     {
         bool is3D = true;
         bool isUsingBottomMeshIn3D = false;
+        bool isOutlineRendered = false;
 
         // create new GameObject (as a child)
         GameObject polyExtruderGO = new GameObject();

@@ -33,7 +33,7 @@ global {
 					free_place <- free_place - shape;
 				}
 			} 
-			do add_background_data(block collect each.shape, 5.0, true, false);
+			do add_background_data(block collect each.shape, 5.0, true);
 		}
 	}
 	

@@ -9,7 +9,6 @@ public class GAMAGeometry
     public List<GAMAPoint> points;
     public List<int> heights;
     public List<bool> hasColliders;
-    public List<bool> outlineRenderers;
 
     public static GAMAGeometry CreateFromJSON(string jsonString)
     {
