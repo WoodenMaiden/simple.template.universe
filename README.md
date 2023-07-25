@@ -7,7 +7,7 @@ Template repository pre-set for implementing GAMA model interfaced with Oculus V
 
 
  - Open the "simple.universe.template/GAMA-UNITY-VR" project from Unity Hub.
- - In Packager manager (Windows menu -> Package Manager), install :
+ - In Package manager (Windows menu -> Package Manager), install :
       * TextMeshPro: import all
       * Oculus Integration: import everything, and for each question after answering the default or recommended answer. It not avaible from the Unity Interface, it can be downloaded from: [https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022)
 
@@ -57,7 +57,7 @@ In the UnityLink model, some parameter values can be defined:
 ### Unity (tested with Unity 2022.3.3f1)
 - Define a new 3D project
 - Assets Menu -> Import Package -> Custom Package and import the "GAMA-UNITY-VR.unitypackage"
-- In Packager manager (Windows menu -> Package Manager), install:
+- In Package manager (Windows menu -> Package Manager), install:
       * TextMeshPro: import all
       * Oculus Integration: import everything, and for each question after answering the default or recommended answer. It not avaible from the Unity Interface, it can be downloaded from: [https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022).
 - To be able after to export and run the application for Meta Quest 2, follow the instructions given in the "Installation of the template" section
