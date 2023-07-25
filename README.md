@@ -6,7 +6,7 @@ Template repository pre-set for implementing GAMA model interfaced with Oculus V
 ### Unity (tested with Unity 2022.3.3f1)
 
 
- - Open the "simple.universe.template/Template Unity Project/GAMA-UNITY-VR" project with Unity Hub.
+ - Launch Unity Hub and open the "simple.universe.template/Template Unity Project/GAMA-UNITY-VR" project with the "Open" button.
  - In Package manager (Windows menu -> Package Manager), install :
       * TextMeshPro: import all
       * Oculus Integration: import everything, and for each question after answering the default or recommended answer. It not avaible from the Unity Interface, it can be downloaded from: [https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022)
