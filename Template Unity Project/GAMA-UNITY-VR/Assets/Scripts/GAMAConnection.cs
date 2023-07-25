@@ -12,27 +12,29 @@ public class GlobalTest : MonoBehaviour
     public string ip = "192.168.0.186";
     public int port = 8000;
 
-    // optional: define a scale between GAMA and Unity for the location given
-    private float GamaCRSCoefX = 1.0f;
-    private float GamaCRSCoefY = 1.0f;
-
-    //optional: rotation, Y-translation and Size scale to apply to the prefabs correspoding to the different species of agents
-    private List<float> rotations = new List<float> { 90.0f, 90.0f, 0.0f };
-    private List<float> YValues = new List<float> { -0.9f, -0.9f, 0.15f };
-    private List<float> Sizefactor = new List<float> { 0.3f, 0.3f, 1.0f };
-
-    //Y scale for the ground
-    private float groundY = 1.0f;
-
-    //Y-offset to apply to the background geometries
-    private float offsetYBackgroundGeom = 0.1f;
-
-
+  
     public GameObject Player;
 
     public GameObject Ground;
 
     public List<GameObject> Agents;
+
+    //optional: rotation, Y-translation and Size scale to apply to the prefabs correspoding to the different species of agents
+    public List<float> rotations = new List<float> { 90.0f, 90.0f, 0.0f };
+    public List<float> YValues = new List<float> { -0.9f, -0.9f, 0.15f };
+    public List<float> Sizefactor = new List<float> { 0.3f, 0.3f, 1.0f };
+
+    // optional: define a scale between GAMA and Unity for the location given
+    public float GamaCRSCoefX = 1.0f;
+    public float GamaCRSCoefY = 1.0f;
+
+
+    //Y scale for the ground
+    public float groundY = 1.0f;
+
+    //Y-offset to apply to the background geometries
+    public float offsetYBackgroundGeom = 0.1f;
+
 
     //optional, used for debugging
     public TMP_Text text = null;
