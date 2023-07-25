@@ -36,7 +36,7 @@ ExportedObj/
 *.user
 *.userprefs
 *.pidb
-*.booproj 
+*.booproj
 *.svd
 *.pdb
 
@@ -47,6 +47,6 @@ ExportedObj/
 sysinfo.txt
 
 # Builds
-*.apk-
+*.apk 
 
 .DS_Store
