@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using TMPro;
-public class GlobalTest : MonoBehaviour
+public class GlobalTest : TCPConnector
 {
 
-    public string ip = "192.168.0.186";
-    public int port = 8000;
+  // public string ip = "192.168.0.186";
+   // public int port = 8000;
 
   
     public GameObject Player;
@@ -63,6 +63,10 @@ public class GlobalTest : MonoBehaviour
 
     private static System.Timers.Timer aTimer;
 
+    private CoordinateConverter converter;
+
+    private PolygonGenerator polyGen;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -73,34 +77,10 @@ public class GlobalTest : MonoBehaviour
                 new Dictionary<int, GameObject>());
         }
         Debug.Log("START WORLD");
-        EstablishConnection();
-    }
-
-    public void EstablishConnection()
-    {
         ConnectToTcpServer();
     }
 
 
-    Vector2 fromGAMACRS2D(int x, int y)
-    {
-        return new Vector2((GamaCRSCoefX * x) / parameters.precision,(GamaCRSCoefY * y) / parameters.precision);
-    }
-    Vector3 fromGAMACRS(int x, int y)
-    {
-        return new Vector3((GamaCRSCoefX * x ) / parameters.precision, 0.0f, (GamaCRSCoefY * y) / parameters.precision);
-    }
-
-    List<int> toGAMACRS(Vector3 pos)
-    {
-        List<int> position = new List<int>();
-        position.Add((int)(pos.x / GamaCRSCoefX * parameters.precision));
-        position.Add((int)(pos.z/ GamaCRSCoefY * parameters.precision));
-
-        return position;
-    }
-
-    
 
 
     private void Update()
@@ -130,7 +110,8 @@ public class GlobalTest : MonoBehaviour
         {
             foreach (GAMAGeometry g in geoms)
             {
-                GeneratePolygons(g);
+                if (polyGen == null) polyGen = new PolygonGenerator(converter, offsetYBackgroundGeom);
+                polyGen.GeneratePolygons(g);
             }
             geoms = null;
         } 
@@ -164,7 +145,7 @@ public class GlobalTest : MonoBehaviour
        
         if (Player != null && playerPositionUpdate && parameters != null)
         {
-           Player.transform.position = fromGAMACRS(parameters.position[0], parameters.position[1]);
+           Player.transform.position = converter.fromGAMACRS(parameters.position[0], parameters.position[1]);
             playerPositionUpdate = false;
             receiveInformation = false;
             if (parameters.delay > 0)
@@ -210,7 +191,7 @@ public class GlobalTest : MonoBehaviour
 
         double angle = ((s > 0) ? -1.0 : 1.0) * (180 / Math.PI) * Math.Acos(c) * parameters.precision;
 
-        List<int> p = toGAMACRS(Player.transform.position); 
+        List<int> p = converter.toGAMACRS(Player.transform.position); 
         SendMessageToServer("{\"position\":[" + p[0] + "," + p[1] + "],\"rotation\": " + (int)angle + "}\n");
     }
 
@@ -251,7 +232,7 @@ public class GlobalTest : MonoBehaviour
             }
 
             
-             Vector3 pos = fromGAMACRS(pi.v[2], pi.v[3]);
+             Vector3 pos = converter.fromGAMACRS(pi.v[2], pi.v[3]);
              pos.y = YValues[speciesIndex];
             float rot = - (pi.v[4] / parameters.precision) + rotations[speciesIndex];
             obj.transform.SetPositionAndRotation(pos,Quaternion.AngleAxis(rot, Vector3.up));
@@ -277,182 +258,40 @@ public class GlobalTest : MonoBehaviour
     }
 
 
-    private void SendMessageToServer(string clientMessage)
-    {
-       // Debug.Log("SendMessageToServer: " + clientMessage);
+   
 
-        if (socketConnection == null)
+    protected override void ManageMessage(string mes)
+    {
+        if (mes.Contains("precision"))
         {
-            return;
+            parameters = ConnectionParameter.CreateFromJSON(mes);
+            converter = new CoordinateConverter(parameters.precision, GamaCRSCoefX, GamaCRSCoefY);
+            SendMessageToServer("ok\n");
+            initialized = true;
+            playerPositionUpdate = true;
+
         }
-        try
+        else if (mes.Contains("points"))
         {
-            // Get a stream object for writing. 			
-            NetworkStream stream = socketConnection.GetStream();
-            if (stream.CanWrite)
+            GAMAGeometry g = GAMAGeometry.CreateFromJSON(mes);
+            if (geoms == null)
             {
-                // Convert string message to byte array.                 
-                byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage);
-
-                // Write byte array to socketConnection stream.                 
-                stream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
-              //  Debug.Log("Client sent his message - should be received by server");
+                geoms = new List<GAMAGeometry>();
             }
+            geoms.Add(g);
+
+
         }
-        catch (SocketException socketException)
+
+        else if (mes.Contains("agents") && parameters != null)
         {
-            Debug.Log("Socket exception: " + socketException);
+            infoWorld = WorldJSONInfo.CreateFromJSON(mes);
+
         }
+        if (text != null)
+            message = mes;
+
     }
 
-    private void ListenForData()
-    {
-        try
-        {
-            Debug.Log("ListenForData : " + ip + "  " + port);
-
-            socketConnection = new TcpClient(ip, port);
-            Debug.Log("socketConnection: " + socketConnection);
-
-            SendMessageToServer("connected\n");
-            Byte[] bytes = new Byte[1024];
-            string fullMessage = "";
-            while (true)
-            {
-                using (NetworkStream stream = socketConnection.GetStream())
-                {
-                    int length;
-                    // Read incomming stream into byte arrary. 					
-
-                    while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
-                    {
-
-                        var incommingData = new byte[length];
-                        Array.Copy(bytes, 0, incommingData, 0, length);
-                        // Convert byte array to string message. 						
-                        string serverMessage = Encoding.ASCII.GetString(incommingData);
-                        fullMessage += serverMessage;
-                        if (fullMessage.Contains("\n"))
-                        {
-                            string[] messages = fullMessage.Split("\n");
-                            string mes = messages[0];
-
-                            if (mes.Contains("precision"))
-                            {
-                                parameters = ConnectionParameter.CreateFromJSON(mes);
-                                SendMessageToServer("ok\n");
-                                initialized = true;
-                                playerPositionUpdate = true;
-
-                            }
-                            else if (mes.Contains("points"))
-                            {
-                                GAMAGeometry g = GAMAGeometry.CreateFromJSON(mes);
-                                if (geoms == null)
-                                {
-                                    geoms = new List<GAMAGeometry>();
-                                }
-                                geoms.Add(g);
-
-
-                            }
-
-                            else if (mes.Contains("agents") && parameters != null)
-                            {
-                                infoWorld = WorldJSONInfo.CreateFromJSON(mes);
-
-                            }
-                            if (text != null)
-                                message = mes;
-                            fullMessage = messages.Length > 1 ? messages[1] : "";  
-                        }
-                    }
-                }
-            }
-        }
-
-        catch (SocketException socketException)
-        {
-            Debug.Log("Socket exception: " + socketException);
-        }
-    }
-
-
-    private void ConnectToTcpServer()
-    {
-        try
-        {
-            Debug.Log("ConnectToTcpServer");
-
-            clientReceiveThread = new Thread(new ThreadStart(ListenForData));
-            clientReceiveThread.IsBackground = true;
-            clientReceiveThread.Start();
-        }
-        catch (Exception e)
-        {
-            Debug.Log("On client connect exception " + e);
-        }
-    }
-
-
-    public void GeneratePolygons(GAMAGeometry geom)
-    {
-
-        List<Vector2> pts = new List<Vector2>();
-        int cpt = 0;
-        for (int i = 0; i < geom.points.Count; i++)
-        {
-            GAMAPoint pt = geom.points[i];
-            if (pt.c.Count < 2)
-            {
-                if (pts.Count > 2)
-                {
-                    print("cpt: " + cpt);
-                    GeneratePolygon(pts.ToArray(), geom.heights[cpt], geom.hasColliders[cpt]);
-                }
-                pts = new List<Vector2>();
-                cpt++;
-            }
-            else
-            {
-                pts.Add(fromGAMACRS2D(pt.c[0], pt.c[1]));
-            }
-            
-            
-        }
-    }
-
-    // Start is called before the first frame update
-    void GeneratePolygon(Vector2[] MeshDataPoints, float extrusionHeight, bool isUsingCollider)
-    {
-        bool is3D = true;
-        bool isUsingBottomMeshIn3D = false;
-        bool isOutlineRendered = false;
-
-        // create new GameObject (as a child)
-        GameObject polyExtruderGO = new GameObject();
-        //polyExtruderGO.transform.parent = this.transform;
-
-        // reference to setup example poly extruder 
-        PolyExtruder polyExtruder;
-
-        // add PolyExtruder script to newly created GameObject and keep track of its reference
-        polyExtruder = polyExtruderGO.AddComponent<PolyExtruder>();
-
-        // global PolyExtruder configurations
-        polyExtruder.isOutlineRendered = isOutlineRendered;
-        Vector3 pos = polyExtruderGO.transform.position;
-        pos.y += offsetYBackgroundGeom;
-        polyExtruderGO.transform.position = pos;
-        polyExtruder.createPrism(polyExtruderGO.name, extrusionHeight, MeshDataPoints, Color.grey, is3D, isUsingBottomMeshIn3D, isUsingCollider);
-        if (isUsingCollider) {
-            MeshCollider mc = polyExtruderGO.AddComponent<MeshCollider>();
-            mc.sharedMesh = polyExtruder.surroundMesh;
-
-
-        }
-       
-
-
-    }
+    
 }
