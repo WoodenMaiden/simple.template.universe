@@ -3,7 +3,7 @@ Template repository pre-set for implementing GAMA model interfaced with Oculus V
 
 ## Installation of the template
 
-### Unity (tested with Unity 2022.3.3f1)
+### Unity (tested with Unity 2022.3.5f1)
 
 
  - Launch Unity Hub and open the "simple.universe.template/Template Unity Project/GAMA-UNITY-VR" project with the "Open" button.
@@ -56,7 +56,7 @@ In the UnityLink model, some parameter values can be defined:
 - float player_size_GAMA: player size - only used for displaying the player in GAMA
 
   
-### Unity (tested with Unity 2022.3.3f1)
+### Unity (tested with Unity 2022.3.5f1)
 - Define a new 3D project
 - Assets Menu -> Import Package -> Custom Package and import the "GAMA-UNITY-VR.unitypackage"
 - In Package manager (Windows menu -> Package Manager), install:
