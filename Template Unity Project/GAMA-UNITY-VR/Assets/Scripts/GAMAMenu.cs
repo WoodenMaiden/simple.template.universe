@@ -11,7 +11,7 @@ public class GAMAMenu : ScriptableObject
     public int port = 8000;
 
 
-    private const string CustomMenuBasePath = "GAMA Menu/";
+    private const string CustomMenuBasePath = "GAMA/";
 	private const string LoadGeometriesPath = CustomMenuBasePath + "Load geometries from GAMA";
 
 	[MenuItem(LoadGeometriesPath)]
