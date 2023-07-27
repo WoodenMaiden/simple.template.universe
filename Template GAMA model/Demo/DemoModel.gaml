@@ -7,7 +7,8 @@
 
 model DemoModel
 
-import "UnityLink.gaml"
+import "../models/UnityLink.gaml"
+
 
 global {
 	int nb_agentsA <- 1000 parameter: true min: 0 max: 5000 step: 1;

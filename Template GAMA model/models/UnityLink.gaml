@@ -46,6 +46,8 @@ global skills: [network]{
 	// for each geometry sent to Unity, does this one has a collider (i.e. a physical existence) ? 
 	list<bool> background_geoms_colliders;
 	
+	// for each geometry sent to Unity, its name in unity 
+	list<string> background_geoms_names;
 	
 	
 	
@@ -114,11 +116,18 @@ global skills: [network]{
 	
 	//add background geometries from a list of geometries, their heights, their collider usage, their outline rendered usage 
 	action add_background_data(list<geometry> geoms, float height, bool collider) {
+		do  add_background_data_with_names(geoms, [],  height,collider) ;
+	
+	}
+	//add background geometries from a list of geometries, their heights, their collider usage, their outline rendered usage 
+	action add_background_data_with_names(list<geometry> geoms, list<string> names, float height, bool collider) {
 		background_geoms <- background_geoms + geoms;
 		loop times: length(geoms) {
 			background_geoms_heights << height;
 			background_geoms_colliders << collider;
 		}
+		
+		background_geoms_names  <- background_geoms_names +  names;
 	}
 	
 	//Wait for the connection of a unity client and send the paramters to the client
@@ -144,7 +153,7 @@ global skills: [network]{
 		}
 		if not empty(background_geoms) {
 		
-			do send_geometries(background_geoms, background_geoms_heights,  background_geoms_colliders, precision);
+			do send_geometries(background_geoms, background_geoms_heights,  background_geoms_colliders, background_geoms_names, precision);
 		}
 		do send_world;
 	}
@@ -166,7 +175,7 @@ global skills: [network]{
 	}
 	
 	//send the background geometries to the Unity client
-	action send_geometries(list<geometry> geoms, list<int> heights, list<bool> geometry_colliders, int precision_) {
+	action send_geometries(list<geometry> geoms, list<int> heights, list<bool> geometry_colliders, list<string> names, int precision_) {
 		map to_send;
 		list points <- [];
 		
@@ -180,6 +189,7 @@ global skills: [network]{
 		to_send <+ "points"::points;
 		to_send <+ "heights"::heights;
 		to_send <+ "hasColliders"::geometry_colliders;
+		to_send <+ "names"::names;
 		
 		if unity_client = nil {
 			write "no client to send to";
@@ -330,8 +340,11 @@ species default_player {
 //Default species for the agent to be send to the Unity Client
 species agent_to_send skills: [moving]{
 	int index_species <- 0;
+	
+	point loc_to_send {return location;}
 	map to_array(int precision_) {
-		return map("v"::[index_species, int(self), int(location.x*precision_), int(location.y*precision_), int(heading*precision_)]);
+		point loc <- loc_to_send();
+		return map("v"::[index_species, int(self), int(loc.x*precision_), int(loc.y*precision_), int(heading*precision_)]);
 	}
 }
 
