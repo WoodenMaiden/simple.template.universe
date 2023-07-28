@@ -3,9 +3,26 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
+  gitleaks:
+    name: Looking for leaked secrets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone Repo  
+        uses: actions/checkout@v3
+
+      - name: Looking 🔍
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Free, only required for Organizations
+
+
   test:
     name: testing project
     runs-on: ubuntu-latest
+
+    needs: gitleaks
 
     steps:
       - name: Check for a Unity License 📜
@@ -80,3 +97,5 @@ jobs:
           name: Tests Results         # Name of the check run which will be created
           path: ./reports/*           # Path to test results
           reporter: dotnet-trx        # Format of test results
+
+    
