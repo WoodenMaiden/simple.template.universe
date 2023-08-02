@@ -1,6 +1,10 @@
 name: Tests
 
-on: [push, pull_request]
+on: 
+  pull_request:
+    types: [ opened, edited, reopened ]
+
+run-name: Testing Unity
 
 jobs:
   gitleaks:
@@ -10,16 +14,17 @@ jobs:
     steps:
       - name: Clone Repo  
         uses: actions/checkout@v3
+        with:
+          lfs: false
 
       - name: Looking 🔍
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Free, only required for Organizations
-
-
-  test:
-    name: testing project
+    
+  testUnity:
+    name: test Unity project
     runs-on: ubuntu-latest
 
     needs: gitleaks
@@ -47,6 +52,7 @@ jobs:
       # # We can afford to uninstall android & dotnet as gameci relies on docker containers
       #     remove-android: true
       #     remove-dotnet: true 
+  
       - name: Clone Repo  
         uses: actions/checkout@v3
 
@@ -97,5 +103,3 @@ jobs:
           name: Tests Results         # Name of the check run which will be created
           path: ./reports/*           # Path to test results
           reporter: dotnet-trx        # Format of test results
-
-    

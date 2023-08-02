@@ -1,0 +1,64 @@
+name: Tests
+
+on: [push, pull_request]
+
+run-name: Testing Gaml
+
+jobs:
+  gitleaks:
+    name: Looking for leaked secrets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone Repo  
+        uses: actions/checkout@v3
+        with:
+          lfs: false
+
+      - name: Looking 🔍
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Free, only required for Organizations
+
+
+  testGaml:
+    name: test Gaml project
+    runs-on: ubuntu-latest
+
+    container: gamaplatform/gama:1.9.2
+    steps:
+      - name: Clone Repo  
+        uses: actions/checkout@v3
+        with:
+          lfs: false
+
+
+      - name: Setup NuShell
+        uses: hustcer/setup-nu@v3
+        with:
+          version: '0.83'
+
+      # todo parse the gaml file into an xml file Headless understands
+      - name: Run tests 🧪
+        shell: nu {0}
+        run: |
+          gama-headless.sh -validate './Template GAMA model/models'
+          gama-headless.sh -test './Template GAMA model/models'
+
+
+      - name: Parse results into report files
+        shell: nu {0}
+        if: success() || failure()   
+            # So we can run this step even if previous step failed
+        run: |
+          echo "TODO :/"
+
+
+      - name: Test Report 📑
+        uses: dorny/test-reporter@v1
+        if: success() || failure()   
+        with:
+          name: Tests Results         # Name of the check run which will be created
+          path: ./reports/*           # Path to test results
+          reporter: dotnet-trx        # Format of test results
