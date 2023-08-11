@@ -21,7 +21,8 @@ public abstract class TCPConnector : MonoBehaviour
 
     public void DisplayMessage(string message)
     {
-        text.SetText(DateTime.Today + " - " + message);
+        if (text != null)
+            text.SetText(DateTime.Today + " - " + message);
     }
 
     protected void SendMessageToServer(string clientMessage)
@@ -58,17 +59,17 @@ public abstract class TCPConnector : MonoBehaviour
 
     protected void ListenForData()
     {
-        DisplayMessage("ListenForData");
+        //DisplayMessage("ListenForData");
 
         try
         {
-            Debug.Log("ListenForData : " + ip + "  " + port);
+           // Debug.Log("ListenForData : " + ip + "  " + port);
 
             socketConnection = new TcpClient(ip, port);
             
-            Debug.Log("socketConnection: " + socketConnection);
+            //Debug.Log("socketConnection: " + socketConnection);
 
-            DisplayMessage("socketConnection: " + socketConnection);
+            //DisplayMessage("socketConnection: " + socketConnection);
 
             SendMessageToServer("connected");
             Byte[] bytes = new Byte[1024];
