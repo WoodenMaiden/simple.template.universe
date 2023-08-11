@@ -22,6 +22,8 @@ global skills: [network]{
 	// connection port
 	int port <- 8000;
 	
+	string end_message_symbol <- "&&&";
+	
 	//as all data (location, rotation) are send as int, number of decimal for the data
 	int precision <- 10000;
 	
@@ -51,6 +53,8 @@ global skills: [network]{
 	
 	
 	
+	
+	bool do_send_world <- true;
 	/*************************************** 
 	 *
 	 * PARAMETERS ABOUT THE PLAYER
@@ -151,28 +155,34 @@ global skills: [network]{
 		loop while: has_more_message() {
 			message s <- fetch_message();
 		}
-		if not empty(background_geoms) {
+		write "connection established";
 		
+		if not empty(background_geoms) {
 			do send_geometries(background_geoms, background_geoms_heights,  background_geoms_colliders, background_geoms_names, precision);
 		}
-		do send_world;
+		if do_send_world {
+			do send_world;
+		}
+		
 	}
 	
 	//send parameters to the unity client
 	action send_parameters {
 		map to_send;
 		to_send <+ "precision"::precision;
-		to_send <+ "world"::[world.shape.width, world.shape.height];
+		to_send <+ "world"::[world.shape.width * precision, world.shape.height * precision];
 		to_send <+ "delay"::delay_after_mes;
 		to_send <+ "physics"::use_physics_for_player;
 		
-		if (the_player != nil) {to_send <+ "position"::[int(location.x*precision), int(location.y*precision)];}
+		to_send <+ "position"::[int(location_init.x*precision), int(location_init.y*precision)];
 		if unity_client = nil {
 			write "no client to send to";
 		} else {
-			do send to: unity_client contents: as_json_string(to_send) + '\n';	
+			do send to: unity_client contents: as_json_string(to_send) + end_message_symbol;	
 		}
 	}
+	
+	action after_sending_background ;
 	
 	//send the background geometries to the Unity client
 	action send_geometries(list<geometry> geoms, list<int> heights, list<bool> geometry_colliders, list<string> names, int precision_) {
@@ -194,8 +204,9 @@ global skills: [network]{
 		if unity_client = nil {
 			write "no client to send to";
 		} else {
-			do send to: unity_client contents: as_json_string(to_send) + '\n';	
+			do send to: unity_client contents: as_json_string(to_send) + end_message_symbol;	
 		}
+		do after_sending_background;
 	}
 	
 	//send the new position of the player to Unity (used to teleport the player from GAMA) 
@@ -249,7 +260,7 @@ global skills: [network]{
 	//send the current state of the world to the Unity Client
 	action send_world {
 		map to_send;
-		list message_agents <- [];
+		list message_ags <- [];
 		list<agent_to_send> ags <- copy(agents_to_send where not dead(each));
 			
 		if (the_player != nil) {
@@ -260,24 +271,32 @@ global skills: [network]{
 				ags <- filter_overlapping(ags);
 			} 
 		}
-		message_agents<-message_agents(ags) ;
+		message_ags<-message_agents(ags) ;
 			
-		to_send <+ "date"::"" + current_date;
-		to_send <+ "agents"::message_agents;
+		//to_send <+ "date"::"" + current_date;
+		to_send <+ "agents"::message_ags;
 		to_send <+ "position"::player_position;
 		player_position <- [];
 		
 		if unity_client = nil {
 			write "no client to send to";
 		} else {
-			do send to: unity_client contents: as_json_string(to_send) + '\n';	
+			string mes <- as_json_string(to_send);
+			do send to: unity_client contents: (mes + end_message_symbol) ;	
 		}
+		do after_sending_world;
+	}
+	
+	action after_sending_world ;
+	
+	point new_player_location(point loc) {
+		return loc;
 	}
 	
 	
 	//if necessary, move the player to its new location
 	reflex move_player when: move_player_event{
-		the_player.location <- #user_location;
+		the_player.location <- new_player_location(#user_location);
 		do send_player_position;
 		move_player_event <- false;
 	}
@@ -291,24 +310,31 @@ global skills: [network]{
 			do send_init_data;
 			initialized <- true;
 		}
-		do send_world;
+		if do_send_world {
+			do send_world;
+		}
+		
 	}
 	
+	action manage_message_from_unity(message s) {
+		//write "s: " + s.contents;
+		if (waiting_message != nil and string(s.contents) = waiting_message) {
+	    	receive_information <- true;
+	    } else if  the_player != nil and move_player_from_unity and receive_information {
+	    	let answer <- map(s.contents);
+			list<int> position <- answer["position"];
+			if position != nil and length(position) = 2  {
+				the_player.rotation <- int(int(answer["rotation"])/precision + rotation_player);
+				the_player.location <- {position[0]/precision, position[1]/precision};
+				the_player.to_display <- true;
+			}
+		}
+	}
 	//received informtation about the player from Unity
-	reflex messages_from_unity when: the_player != nil and has_more_message() {
+	reflex messages_from_unity when:  has_more_message() {
 		loop while: has_more_message() {
 			message s <- fetch_message();
-			if (waiting_message != nil and string(s.contents) = waiting_message) {
-	    		receive_information <- true;
-	    	} else if move_player_from_unity and receive_information {
-	    		let answer <- map(s.contents);
-				list<int> position <- answer["position"];
-				if position != nil and length(position) = 2  {
-					the_player.rotation <- int(int(answer["rotation"])/precision + rotation_player);
-					the_player.location <- {position[0]/precision, position[1]/precision};
-					the_player.to_display <- true;
-				}
-			}
+			do manage_message_from_unity(s);
 		}
 	}	
 }

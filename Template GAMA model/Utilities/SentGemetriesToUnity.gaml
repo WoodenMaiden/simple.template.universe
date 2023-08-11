@@ -4,7 +4,7 @@
 * Description: A simple model allow to send geometries to Unity. To be used with the "Load geometries from GAMA"
 * Tags: gis, shapefile, unity, geometry, 
 */
-model traffic
+model sendGeometriesToUnity
 
 import "../models/UnityLink.gaml"
 
@@ -22,6 +22,9 @@ global {
 
 	geometry shape <- envelope(bounds_shape_file) ;
 	
+	bool create_player <- false;
+	bool do_send_world <- false;
+	
 	
 	
 	init {
@@ -37,6 +40,12 @@ global {
 			
 		do add_background_data_with_names(building collect each.shape,  building collect each.name, 10.0, true);
 		do add_background_data_with_names(road collect (each.shape buffer each.width), road collect each.name, 0.1, false);
+		
+		
+	}
+	
+	action after_sending_background {
+		//do pause;
 	}
 }
 
@@ -58,7 +67,6 @@ species road {
 
 }
 
-experiment sendGeometriesToUnity_batch type: batch until: cycle = 10;
 
 experiment sendGeometriesToUnity type: gui autorun: true  {
 	float minimum_cycle_duration <- 0.1;
