@@ -14,7 +14,9 @@ public class PlayerScript : MonoBehaviour
         vectF.y = 0;
         Vector3 vectR = Camera.main.transform.right;
         vectR.y = 0;
-        transform.Translate(vectF * speed * Time.fixedDeltaTime * Input.GetAxis("Vertical"));
-        transform.Translate(vectR * speed * Time.fixedDeltaTime * Input.GetAxis("Horizontal"));
+        transform.position += (vectF * speed * Time.fixedDeltaTime * Input.GetAxis("Vertical"));
+        transform.position += (vectR * speed * Time.fixedDeltaTime * Input.GetAxis("Horizontal"));
+        //transform.Translate(vectF * speed * Time.fixedDeltaTime * Input.GetAxis("Vertical"));
+        //transform.Translate(vectR * speed * Time.fixedDeltaTime * Input.GetAxis("Horizontal"));
     }
 }

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4981438105629478856
+--- !u!1 &2051957010009073108
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 199185510547797097}
-  - component: {fileID: 5182286875685559086}
+  - component: {fileID: 7616266498451875700}
+  - component: {fileID: 9143310306620851243}
+  - component: {fileID: 3033337264131522943}
+  - component: {fileID: 4735144545838526816}
+  - component: {fileID: 3615082732328428754}
   m_Layer: 0
   m_Name: GAMAConnector
   m_TagString: Untagged
@@ -17,34 +20,110 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &199185510547797097
+--- !u!4 &7616266498451875700
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4981438105629478856}
+  m_GameObject: {fileID: 2051957010009073108}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5182286875685559086
+--- !u!114 &9143310306620851243
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4981438105629478856}
+  m_GameObject: {fileID: 2051957010009073108}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3bc2394028754b80adbfee67998117e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ip: localhost
+  port: 8000
+  endMessageSymbol: '&&&'
   Player: {fileID: 0}
   Ground: {fileID: 0}
-  Agents: []
+  Agents:
+  - {fileID: 7577107419198289967, guid: 964b8008a3e9dd9419a9fd692f7f2f21, type: 3}
+  - {fileID: 3137833466188651626, guid: 04fdc8229acc9ae4ba45b669007175a3, type: 3}
+  rotations:
+  - 90
+  - 90
+  rotationsCoeff:
+  - -1
+  - -1
+  YValues:
+  - -0.33
+  - -0.33
+  Sizefactor:
+  - 0.2
+  - 0.2
+  GamaCRSCoefX: 1
+  GamaCRSCoefY: 1
+  GamaCRSOffsetX: 0
+  GamaCRSOffsetY: 0
+  groundY: 0.1
+  offsetYBackgroundGeom: 0.1
   text: {fileID: 0}
+--- !u!114 &3033337264131522943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051957010009073108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0eb453a0a57d498492ebf658ed7a7b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectsToExport:
+  - {fileID: 0}
+--- !u!114 &4735144545838526816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051957010009073108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3bf5270e27be442b9c5990fab784dd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ip: localhost
+  port: 8000
+  endMessageSymbol: '&&&'
+  GamaCRSCoefX: 1
+  GamaCRSCoefY: 1
+  GamaCRSOffsetX: 0
+  GamaCRSOffsetY: 0
+--- !u!114 &3615082732328428754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051957010009073108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e7ac1b3559914c6c89098725cb501da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ip: localhost
+  port: 8000
+  endMessageSymbol: '&&&'
+  GamaCRSCoefX: 1
+  GamaCRSCoefY: 1
+  GamaCRSOffsetX: 0
+  GamaCRSOffsetY: 0
+  offsetYBackgroundGeom: 0

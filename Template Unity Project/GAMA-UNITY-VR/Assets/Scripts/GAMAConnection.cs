@@ -2,18 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Timers;
 using TMPro;
 public class GlobalTest : TCPConnector
 {
 
-  // public string ip = "192.168.0.186";
-   // public int port = 8000;
-
+ 
   
-    public GameObject Player;
+    public GameObject Player; 
 
     public GameObject Ground;
 
@@ -21,12 +18,15 @@ public class GlobalTest : TCPConnector
 
     //optional: rotation, Y-translation and Size scale to apply to the prefabs correspoding to the different species of agents
     public List<float> rotations = new List<float> { 90.0f, 90.0f, 0.0f };
+    public List<float> rotationsCoeff = new List<float> { 1, 1, 0.0f };
     public List<float> YValues = new List<float> { -0.9f, -0.9f, 0.15f };
     public List<float> Sizefactor = new List<float> { 0.3f, 0.3f, 1.0f };
 
     // optional: define a scale between GAMA and Unity for the location given
     public float GamaCRSCoefX = 1.0f;
     public float GamaCRSCoefY = 1.0f;
+    public float GamaCRSOffsetX = 0f;
+    public float GamaCRSOffsetY = 0f;
 
 
     //Y scale for the ground
@@ -117,9 +117,24 @@ public class GlobalTest : TCPConnector
         } 
         if (parameters != null && Ground != null && !defineGroundSize)
         {
-            Ground.transform.localScale = new Vector3(parameters.world[0], groundY, parameters.world[1]);
-            Ground.transform.position = new Vector3(parameters.world[0]/2.0f, -groundY, parameters.world[1] / 2.0f);
+            Vector3 ls = converter.fromGAMACRS(parameters.world[0], parameters.world[1]);
+            if (ls.z < 0)
+                ls.z = -ls.z;
+            if (ls.x < 0)
+                ls.x = -ls.x;
+            ls.y = groundY;
+            Ground.transform.localScale = ls;
+
+            Vector3 ps = converter.fromGAMACRS(parameters.world[0]/2, parameters.world[1]/2);
+            ps.y = -groundY;
+
+            Ground.transform.position = ps;
             defineGroundSize = true;
+            if (Player != null)
+            {
+                Vector3 pos = converter.fromGAMACRS(parameters.position[0], parameters.position[1]);
+                Player.transform.position = pos;
+            }
             if (parameters.physics && Player != null)
             {
                 if (Player.GetComponent<Rigidbody>() == null)
@@ -138,7 +153,7 @@ public class GlobalTest : TCPConnector
         {
             timerFinish = false;
 
-            SendMessageToServer("ready\n");
+            SendMessageToServer("ready");
 
             return;
         }
@@ -192,7 +207,7 @@ public class GlobalTest : TCPConnector
         double angle = ((s > 0) ? -1.0 : 1.0) * (180 / Math.PI) * Math.Acos(c) * parameters.precision;
 
         List<int> p = converter.toGAMACRS(Player.transform.position); 
-        SendMessageToServer("{\"position\":[" + p[0] + "," + p[1] + "],\"rotation\": " + (int)angle + "}\n");
+        SendMessageToServer("{\"position\":[" + p[0] + "," + p[1] + "],\"rotation\": " + (int)angle + "}");
     }
 
     private void UpdateAgentList()
@@ -234,7 +249,7 @@ public class GlobalTest : TCPConnector
             
              Vector3 pos = converter.fromGAMACRS(pi.v[2], pi.v[3]);
              pos.y = YValues[speciesIndex];
-            float rot = - (pi.v[4] / parameters.precision) + rotations[speciesIndex];
+            float rot = rotationsCoeff[speciesIndex] * (pi.v[4] / parameters.precision) + rotations[speciesIndex];
             obj.transform.SetPositionAndRotation(pos,Quaternion.AngleAxis(rot, Vector3.up));
 
             obj.SetActive(true);
@@ -265,8 +280,8 @@ public class GlobalTest : TCPConnector
         if (mes.Contains("precision"))
         {
             parameters = ConnectionParameter.CreateFromJSON(mes);
-            converter = new CoordinateConverter(parameters.precision, GamaCRSCoefX, GamaCRSCoefY);
-            SendMessageToServer("ok\n");
+            converter = new CoordinateConverter(parameters.precision, GamaCRSCoefX, GamaCRSCoefY, GamaCRSOffsetX, GamaCRSOffsetY);
+            SendMessageToServer("ok");
             initialized = true;
             playerPositionUpdate = true;
 

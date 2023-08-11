@@ -1,20 +1,21 @@
 
 using UnityEngine;
 using UnityEditor;
-using System.Diagnostics;
 
 public class GAMAGeometryLoaderUI : EditorWindow
 {
-    public string ip = "192.168.0.186";
+    public string ip = "localhost";
     public int port = 8000;
-    public float GamaCRSCoefX = 1.0f;
-    public float GamaCRSCoefY = 1.0f;
+    public float GamaCRSCoefX = 0.49f;//1.0f;
+    public float GamaCRSCoefY = -0.49f;//1.0f;
     public float offsetYBackgroundGeom = 0.0f;
-  /*  public string GamaPath = " bash /Applications/Gama.app/Contents/headless/gama-headless.sh";
-    public string GamaModelPath = "/Users/patricktaillandier/Documents/GitHub/simple.universe.template_/Template GAMA model/Utilities/SentGemetriesToUnity.gaml";
-    public string GamaExperiment = "sendGeometriesToUnity_batch";
-    public bool runGAMA = false;
-  */
+    public float GamaCRSOffsetX = 12.0f;
+    public float GamaCRSOffsetY = -10.0f;
+    /*  public string GamaPath = " bash /Applications/Gama.app/Contents/headless/gama-headless.sh";
+      public string GamaModelPath = "/Users/patricktaillandier/Documents/GitHub/simple.universe.template_/Template GAMA model/Utilities/SentGemetriesToUnity.gaml";
+      public string GamaExperiment = "sendGeometriesToUnity_batch";
+      public bool runGAMA = false;
+    */
     private GAMAGeometryLoader loader;
 
 
@@ -31,6 +32,12 @@ public class GAMAGeometryLoaderUI : EditorWindow
         GUILayout.Space(10);
         GamaCRSCoefY = float.Parse(EditorGUILayout.TextField("Z-scaling: ", GamaCRSCoefY + ""));
         GUILayout.Space(10);
+        GamaCRSOffsetX = float.Parse(EditorGUILayout.TextField("X-Offset: ", GamaCRSOffsetX + ""));
+        GUILayout.Space(10);
+        GamaCRSOffsetY = float.Parse(EditorGUILayout.TextField("Z-Offset: ", GamaCRSOffsetY + ""));
+
+        GUILayout.Space(10);
+
         offsetYBackgroundGeom = float.Parse(EditorGUILayout.TextField("Y-Offset: ", offsetYBackgroundGeom + ""));
        /* runGAMA = EditorGUILayout.Toggle("Let Unity run GAMA", runGAMA);
         if (runGAMA)
@@ -61,8 +68,11 @@ public class GAMAGeometryLoaderUI : EditorWindow
 
             }*/
 
-            loader = new GAMAGeometryLoader(ip, port, GamaCRSCoefX, GamaCRSCoefY, offsetYBackgroundGeom);
-            
+
+            loader = FindAnyObjectByType<GAMAGeometryLoader>();
+            loader.GenerateGeometries(ip, port, GamaCRSCoefX, GamaCRSCoefY, GamaCRSOffsetX, GamaCRSOffsetY, offsetYBackgroundGeom);
+
+
             Close();
         }
         if (GUILayout.Button("Cancel")) Close();

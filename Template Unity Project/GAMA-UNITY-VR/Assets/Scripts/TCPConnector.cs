@@ -9,15 +9,16 @@ using System.Text;
 
 public abstract class TCPConnector : MonoBehaviour
 {
-    public string ip = "192.168.0.186";
+    public string ip = "localhost";//"192.168.0.186";
     public int port = 8000;
+    public string endMessageSymbol = "&&&";
     private TcpClient socketConnection;
     private Thread clientReceiveThread;
 
 
     protected void SendMessageToServer(string clientMessage)
     {
-        // Debug.Log("SendMessageToServer: " + clientMessage);
+       //  Debug.Log("SendMessageToServer: " + clientMessage);
 
         if (socketConnection == null)
         {
@@ -27,14 +28,16 @@ public abstract class TCPConnector : MonoBehaviour
         {
             // Get a stream object for writing. 			
             NetworkStream stream = socketConnection.GetStream();
+           // stream.Flush();
             if (stream.CanWrite)
             {
                 // Convert string message to byte array.                 
-                byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage);
+                byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage + "\n");
 
                 // Write byte array to socketConnection stream.                 
                 stream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
-                //  Debug.Log("Client sent his message - should be received by server");
+                //stream.Flush();
+                  Debug.Log("Client sent his message - should be received by server");
             }
         }
         catch (SocketException socketException)
@@ -50,34 +53,45 @@ public abstract class TCPConnector : MonoBehaviour
         try
         {
             Debug.Log("ListenForData : " + ip + "  " + port);
-
+            ip = "localhost";
             socketConnection = new TcpClient(ip, port);
+            
             Debug.Log("socketConnection: " + socketConnection);
 
-            SendMessageToServer("connected\n");
+            SendMessageToServer("connected");
             Byte[] bytes = new Byte[1024];
             string fullMessage = "";
             while (true)
             {
                 using (NetworkStream stream = socketConnection.GetStream())
                 {
+                   
                     int length;
                     // Read incomming stream into byte arrary. 					
-
+                 
                     while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
-
                         var incommingData = new byte[length];
                         Array.Copy(bytes, 0, incommingData, 0, length);
                         // Convert byte array to string message. 						
                         string serverMessage = Encoding.ASCII.GetString(incommingData);
+                       // Debug.Log("serverMessage:" + serverMessage);
+                        stream.Flush();
                         fullMessage += serverMessage;
-                        if (fullMessage.Contains("\n"))
+                        if (fullMessage.Contains(endMessageSymbol))
                         {
-                            string[] messages = fullMessage.Split("\n");
-                            string mes = messages[0];
-                            ManageMessage(mes);
-                            fullMessage = messages.Length > 1 ? messages[1] : "";
+                          //  Debug.Log("fullMessage:" + fullMessage);
+
+                            string[] messages = fullMessage.Split(endMessageSymbol);
+                          //  Debug.Log("messages.Length:" + messages.Length);
+                            for (int i = 0; i < messages.Length - 1; i++)
+                            {
+                                string mes = messages[i];
+                            //    Debug.Log("mes:" + mes);
+                                ManageMessage(mes);
+                            }
+                            
+                            fullMessage = messages[messages.Length - 1] != null ? messages[messages.Length - 1] : "";
                         }
                     }
                 }

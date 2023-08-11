@@ -12,6 +12,8 @@ public class GAMAGeometryLoader : TCPConnector
     // optional: define a scale between GAMA and Unity for the location given
     public float GamaCRSCoefX = 1.0f;
     public float GamaCRSCoefY = 1.0f;
+    public float GamaCRSOffsetX = 0.0f;
+    public float GamaCRSOffsetY = 0.0f;
     public float offsetYBackgroundGeom = 0.0f;
 
     private PolygonGenerator polyGen;
@@ -19,17 +21,23 @@ public class GAMAGeometryLoader : TCPConnector
     private GAMAGeometry geoms;
 
     private bool continueProcess = true;
-    public GAMAGeometryLoader(string ip_, int port_, float x, float y, float YOffset)
+    
+
+    public void GenerateGeometries(string ip_, int port_, float x, float y, float ox, float oy, float YOffset)
     {
         ip = ip_;
         port = port_;
         GamaCRSCoefX = x;
         GamaCRSCoefY = y;
+        GamaCRSOffsetX = ox;
+        GamaCRSOffsetY = oy;
         offsetYBackgroundGeom = YOffset;
         ConnectToTcpServer();
 
-
+        continueProcess = true;
         while (continueProcess) {
+            Debug.Log("continueProcess:" + continueProcess);
+
             generateGeom();
 
         }
@@ -37,8 +45,11 @@ public class GAMAGeometryLoader : TCPConnector
 
     private void generateGeom()
     {
-        if (parameters != null && geoms != null)
+
+        Debug.Log("parameters:" + parameters + " geoms:" + geoms);
+        if (parameters != null && converter != null && geoms != null)
         {
+            Debug.Log("ici:" + converter);
 
             if (polyGen == null) polyGen = new PolygonGenerator(converter, offsetYBackgroundGeom);
             polyGen.GeneratePolygons(geoms);
@@ -48,18 +59,22 @@ public class GAMAGeometryLoader : TCPConnector
 
     protected override void ManageMessage(string mes)
     {
-        print(mes);
+        Debug.Log("mes:" + mes);
         if (mes.Contains("precision"))
         {
             parameters = ConnectionParameter.CreateFromJSON(mes);
-            converter = new CoordinateConverter(parameters.precision, GamaCRSCoefX, GamaCRSCoefY);
+            converter = new CoordinateConverter(parameters.precision, GamaCRSCoefX, GamaCRSCoefY, GamaCRSOffsetX, GamaCRSOffsetY);
 
             SendMessageToServer("ok\n");
 
+
         }
+       
+
         else if (mes.Contains("points"))
         {
             geoms = GAMAGeometry.CreateFromJSON(mes);
+
             
         }
     }
