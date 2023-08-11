@@ -6,15 +6,23 @@ using System;
 using System.Net.Sockets;
 using System.Threading;
 using System.Text;
+using TMPro;
 
 public abstract class TCPConnector : MonoBehaviour
 {
-    public string ip = "localhost";//"192.168.0.186";
+    public string ip = "localhost";
     public int port = 8000;
     public string endMessageSymbol = "&&&";
     private TcpClient socketConnection;
     private Thread clientReceiveThread;
 
+    //optional, used for debugging
+    public TMP_Text text = null;
+
+    public void DisplayMessage(string message)
+    {
+        text.SetText(DateTime.Today + " - " + message);
+    }
 
     protected void SendMessageToServer(string clientMessage)
     {
@@ -44,19 +52,23 @@ public abstract class TCPConnector : MonoBehaviour
         {
             Debug.Log("Socket exception: " + socketException);
         }
-    }
+    } 
 
     protected virtual void ManageMessage(string message) { }
 
     protected void ListenForData()
     {
+        DisplayMessage("ListenForData");
+
         try
         {
             Debug.Log("ListenForData : " + ip + "  " + port);
-            ip = "localhost";
+
             socketConnection = new TcpClient(ip, port);
             
             Debug.Log("socketConnection: " + socketConnection);
+
+            DisplayMessage("socketConnection: " + socketConnection);
 
             SendMessageToServer("connected");
             Byte[] bytes = new Byte[1024];
@@ -107,10 +119,11 @@ public abstract class TCPConnector : MonoBehaviour
 
     protected void ConnectToTcpServer()
     {
+        DisplayMessage("ConnectToTcpServer");
+
         try
         {
             Debug.Log("ConnectToTcpServer");
-
             clientReceiveThread = new Thread(new ThreadStart(ListenForData));
             clientReceiveThread.IsBackground = true;
             clientReceiveThread.Start();

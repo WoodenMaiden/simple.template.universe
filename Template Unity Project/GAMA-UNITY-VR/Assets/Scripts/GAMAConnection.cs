@@ -36,8 +36,6 @@ public class GlobalTest : TCPConnector
     public float offsetYBackgroundGeom = 0.1f;
 
 
-    //optional, used for debugging
-    public TMP_Text text = null;
 
     private List<Dictionary<int, GameObject>> agentMapList ;
 
@@ -70,13 +68,15 @@ public class GlobalTest : TCPConnector
     // Start is called before the first frame update
     void Start()
     {
-        agentMapList = new List<Dictionary<int, GameObject>>();
+        DisplayMessage("Start");
+       agentMapList = new List<Dictionary<int, GameObject>>();
         foreach (GameObject i in Agents) 
         {
             agentMapList.Add(
                 new Dictionary<int, GameObject>());
         }
         Debug.Log("START WORLD");
+        DisplayMessage("IP: " + ip + " port: " + port);
         ConnectToTcpServer();
     }
 
@@ -85,6 +85,7 @@ public class GlobalTest : TCPConnector
 
     private void Update()
     {
+        //DisplayMessage("Update");
         if (text != null && message != null)
         {
             if (message.Contains("agents"))
@@ -93,7 +94,7 @@ public class GlobalTest : TCPConnector
             }
         }
     }
-
+    public int cpt = 0;
     // Specify what you want to happen when the Elapsed event is raised.
     private static void OnTimedEvent(object source, ElapsedEventArgs e)
     {
@@ -106,7 +107,10 @@ public class GlobalTest : TCPConnector
 
     void FixedUpdate()
     {
-        if(parameters != null && geoms != null)
+        cpt++;
+       // DisplayMessage("parameters: " + parameters + " cpt:"  + cpt);
+
+        if (parameters != null && geoms != null)
         {
             foreach (GAMAGeometry g in geoms)
             {
@@ -190,11 +194,7 @@ public class GlobalTest : TCPConnector
         }
     }
 
-    private void DisplayMessage(string message)
-    {
-        text.SetText(DateTime.Today + " - " + message);
-    }
-
+   
     private void SendPlayerPosition()
     {
         Vector2 vF = new Vector2(Camera.main.transform.forward.x, Camera.main.transform.forward.z);

@@ -371,6 +371,10 @@ PrefabInstance:
       value: GAMAConnector
       objectReference: {fileID: 0}
     - target: {fileID: 3615082732328428754, guid: 134f8b66462124270806c1847609cafd, type: 3}
+      propertyPath: ip
+      value: localhost
+      objectReference: {fileID: 0}
+    - target: {fileID: 3615082732328428754, guid: 134f8b66462124270806c1847609cafd, type: 3}
       propertyPath: GamaCRSCoefX
       value: 1
       objectReference: {fileID: 0}
@@ -385,6 +389,10 @@ PrefabInstance:
     - target: {fileID: 3615082732328428754, guid: 134f8b66462124270806c1847609cafd, type: 3}
       propertyPath: GamaCRSOffsetY
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4735144545838526816, guid: 134f8b66462124270806c1847609cafd, type: 3}
+      propertyPath: ip
+      value: localhost
       objectReference: {fileID: 0}
     - target: {fileID: 7616266498451875700, guid: 134f8b66462124270806c1847609cafd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -428,7 +436,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9143310306620851243, guid: 134f8b66462124270806c1847609cafd, type: 3}
       propertyPath: ip
-      value: localhost
+      value: 192.168.0.186
       objectReference: {fileID: 0}
     - target: {fileID: 9143310306620851243, guid: 134f8b66462124270806c1847609cafd, type: 3}
       propertyPath: text
