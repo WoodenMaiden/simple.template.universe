@@ -26,7 +26,7 @@ Then build the executable for Meta Quest 2:
  - Import from GAMA the Template GAMA model
  - The Template model is structured as follow:
       * models/UnityLink.gaml: the main file that define the connection between GAMA and Unity. It has to be imported in all projects.
-      * Demo/DemoModel.gaml: a example model that shows how to define a VR model from GAMA. It works with the DemoScene from the Unity package.
+      * Demo/DemoModel.gaml: an example model that shows how to define a VR model from GAMA. It works with the DemoScene from the Unity package.
       * Utilities/ImportGeometriesFromUnity.gaml: a model that have to be run for importing Unity GameObjects into GAMA geometries.
       * Utilities/SentGeometriesToUnity.gaml: a model that have to be run for sending GAMA geometries to Unity (as GameObjects).
           
