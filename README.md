@@ -92,8 +92,19 @@ In the UnityLink model, some parameter values can be defined:
   - To test the model, a simple and fast way is to play the application from Unity. The GAMA model should start, the world with the agents should be visible from Unity. If an error appears in one of the Oculus Intgeration Script, a workaround consists in commenting this line: this workaround should not impact the running of the model.
   - To run the application from the VR Headset, deploy the application on the headset and run it. The application is avaibale from Applications with unkown source (that can be selected using the Filter in the Application Library of the headset).
 
-  
-        
+
+
+## Import GAMA geometries from Unity 
+
+### In GAMA
+  - Open the model "Template GAMA Model/Utilities/SendGeometriesToUnity.gaml", and modify it to select the data to send to Unity. All the geometries that will be sent to Unity have to be added to the lists: background_geoms (list of geometries), background_geoms_heights (for each geometry, its height), background_geoms_colliders (for each geometry, has Unity to add a collider), and background_geoms_names (for each geometry, its name). In order to facilitate the manipulation of these lists, it is possible to directly used the "add_background_data_with_names" action: this action will automatically fill these lists. This action has 4 parameters: the list of geometries, the list of names, the height of the geometries (float), boolean to indicates if a mesh collider has to be added to the gameobject.
+  -  run the experiment "SendGeometriesToUnity".
+
+### In Unity
+  - In the GAMA Menu (added by the GAMA-UNITY-VR package), choose "Load Geometries from GAMA"
+  - Define the paramaters
+  - Click on the "Import" button
+  - The Geometries will be added in a GameObject called "Generated". Each GAMA geometry will correspond to a GameObject.  
     
 
 	
