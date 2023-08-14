@@ -11,8 +11,8 @@ import "../models/UnityLink.gaml"
 
 
 global {
-	int nb_agentsA <- 1000 parameter: true min: 0 max: 5000 step: 1;
-	int nb_agentsB <- 1000 parameter: true min: 0 max: 5000 step: 1;
+	int nb_agentsA <- 500 parameter: true min: 0 max: 5000 step: 1;
+	int nb_agentsB <- 500 parameter: true min: 0 max: 5000 step: 1;
 	float cycle_duration <- 0.03 parameter: true min: 0.0 max: 0.1 step: 0.01;
 	float step <- 0.1 parameter: true min: 0.1 max: 2.0 step: 0.1;
 	int nb_blocks <- 10 parameter: true min: 0 max: 10 step: 1.0;
