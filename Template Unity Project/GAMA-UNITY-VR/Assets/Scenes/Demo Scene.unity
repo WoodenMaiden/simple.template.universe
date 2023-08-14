@@ -436,7 +436,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9143310306620851243, guid: 134f8b66462124270806c1847609cafd, type: 3}
       propertyPath: ip
-      value: 192.168.0.186
+      value: localhost
       objectReference: {fileID: 0}
     - target: {fileID: 9143310306620851243, guid: 134f8b66462124270806c1847609cafd, type: 3}
       propertyPath: text
