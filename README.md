@@ -93,38 +93,6 @@ In the UnityLink model, some parameter values can be defined:
   - To run the application from the VR Headset, deploy the application on the headset and run it. The application is avaibale from Applications with unkown source (that can be selected using the Filter in the Application Library of the headset).
 
 
-## Export Unity GameObjects to GAMA
-<img width="1097" alt="Capture d’écran 2023-08-14 à 11 30 25" src="https://github.com/project-SIMPLE/simple.template.universe/assets/1506077/dd68f77e-1f36-4797-8b25-1acdca3c2683">
-
-### In GAMA
-  - Open the model "Template GAMA Model/Utilities/ImportGemetriesFromUnity.gaml",
-  - run the experiment "importGeometriesFromUnity".
-
-### In Unity
-  - In the GAMA Menu (added by the GAMA-UNITY-VR package), choose "<export GameObjects Geometries to GAMA"
-  - Define the paramaters
-    <img width="1097" alt="Capture d’écran 2023-08-14 à 11 28 40" src="https://github.com/project-SIMPLE/simple.template.universe/assets/1506077/e99c5bb9-724f-4fa1-a73c-9c5ec1970837">
-
-  - Click on the "Export" button
-  - In GAMA, the geometries are available in the « Utilities/generated/objects.shp » shapefile  
-
-## Import GAMA geometries from Unity 
-<img width="1105" alt="Capture d’écran 2023-08-14 à 11 30 39" src="https://github.com/project-SIMPLE/simple.template.universe/assets/1506077/9e436996-33e7-4a83-883e-7a611ee46fb3">
-
-### In GAMA
-  - Open the model "Template GAMA Model/Utilities/SendGeometriesToUnity.gaml", and modify it to select the data to send to Unity. All the geometries that will be sent to Unity have to be added to the lists: background_geoms (list of geometries), background_geoms_heights (for each geometry, its height), background_geoms_colliders (for each geometry, has Unity to add a collider), and background_geoms_names (for each geometry, its name). In order to facilitate the manipulation of these lists, it is possible to directly used the "add_background_data_with_names" action: this action will automatically fill these lists. This action has 4 parameters: the list of geometries, the list of names, the height of the geometries (float), boolean to indicates if a mesh collider has to be added to the gameobject.
-  -  run the experiment "SendGeometriesToUnity".
-
-### In Unity
-  - In the GAMA Menu (added by the GAMA-UNITY-VR package), choose "Load Geometries from GAMA"
-  - Define the paramaters
-<img width="1012" alt="Capture d’écran 2023-08-14 à 11 14 23" src="https://github.com/project-SIMPLE/simple.template.universe/assets/1506077/7cf820c9-d0d0-4e57-9746-f1e010f0ab57">
-
-    
-  - Click on the "Import" button
-  - The Geometries will be added in a GameObject called "Generated". Each GAMA geometry will correspond to a GameObject.  
-    
-
 	
 
 
