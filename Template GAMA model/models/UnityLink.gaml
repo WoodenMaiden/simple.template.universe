@@ -375,7 +375,7 @@ species agent_to_send skills: [moving]{
 }
 
 //Default xp with the possibility to move the player
-experiment vr_xp virtual: true  {
+experiment vr_xp autorun: true virtual: true  {
 	action move_player {
 		move_player_event <- true;
 	}
