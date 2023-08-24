@@ -376,6 +376,11 @@ species agent_to_send skills: [moving]{
 
 //Default xp with the possibility to move the player
 experiment vr_xp autorun: true virtual: true  {
+	parameter "Wait & Connect to Unity" var: connect_to_unity category: 'Virtual Universe connection settings';
+	parameter "Initial player location" var: location_init category: 'Virtual Universe connection settings';
+	parameter "Size of player avatar in GAMA" var: player_size_GAMA category: 'Virtual Universe connection settings';
+	parameter "Sync Unity player in GAMA" var: move_player_from_unity category: 'Virtual Universe connection settings';
+
 	action move_player {
 		move_player_event <- true;
 	}
